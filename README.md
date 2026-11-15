@@ -47,7 +47,7 @@ seamlessly with Home Assistant, bringing all your custom functionality into the 
     - Click the folder icon from the top left corner and edit `configuration.yaml`
     - At the end of the file append the SMioplus config:
         ```yaml
-        SMioplus:
+        smioplus:
         ```
         > for more information, see [configuration.yaml](#configuration.yaml)
     - Save the file
@@ -55,6 +55,24 @@ seamlessly with Home Assistant, bringing all your custom functionality into the 
 6. Reboot system
 
 7. Reboot system (yes, it must be done twice)
+
+### Upgrading from the `SMioplus` domain
+
+The integration domain is now lowercase, as required by Home Assistant and
+Marketplace. Back up Home Assistant before upgrading.
+
+1. Uninstall the old `SMioplus` integration from HACS or Marketplace, then
+   install the updated version. Marketplace may require uninstalling and
+   re-adding the repository when its domain changes.
+2. Ensure the old `custom_components/SMioplus` directory is gone and the new
+   integration is installed in `custom_components/smioplus`. Do not keep both.
+3. Change the top-level `SMioplus:` key in `configuration.yaml` to `smioplus:`,
+   keeping the existing settings, and restart Home Assistant.
+
+On startup, existing entity registry entries are migrated to the new domain,
+preserving their entity IDs and settings. If conflicting entries already exist
+under `smioplus`, setup fails rather than overwriting them; resolve the
+conflicting entities before restarting.
 
 
 
@@ -73,27 +91,27 @@ automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
 
-SMioplus:
+smioplus:
     # + optional configs
 ```
 
 - Simple stack 0 config:
 
 ```yaml
-SMioplus:
+smioplus:
 ```
 
 - Specific stack config:
 
 ```yaml
-SMioplus:
+smioplus:
     - stack: 2
 ```
 
 - Multiple cards on different stack levels:
 
 ```yaml
-SMioplus:
+smioplus:
     - stack: 0
     - stack: 2
     - stack: 3
@@ -104,7 +122,7 @@ SMioplus:
 > !The following example is provided for illustrative purposes only and does NOT necessarily represent real entities!
 
 ```yaml
-SMioplus:
+smioplus:
     - stack: 0
       relay_1:
       relay_3:

@@ -3,7 +3,7 @@ LINK="https://sequentmicrosystems.com/products/raspberry-pi-home-automation-card
 
 import libioplus
 API = libioplus
-DOMAIN = "SMioplus"
+DOMAIN = "smioplus"
 NAME_PREFIX = "smio"
 SM_MAP = {
     "button": {
