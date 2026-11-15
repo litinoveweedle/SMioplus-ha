@@ -7,6 +7,15 @@ seamlessly with Home Assistant, bringing all your custom functionality into the 
 
 ## Installation
 
+> This development version requires `sequent-ha-common==0.1.0`. That package
+> must be published to PyPI before Home Assistant can install the integration
+> normally. The shared-package version pins in both Sequent integrations
+> should be updated and tested together.
+
+For local development, install the shared package into the test Python
+environment with `python -m pip install -e /path/to/sequent-ha-common`.
+This does not replace publication for a normal Home Assistant installation.
+
 > If you already have HACS, I2C and File editor configured, you can skip to [The actual installation](#the-actual-installation)
 
 
@@ -42,19 +51,12 @@ seamlessly with Home Assistant, bringing all your custom functionality into the 
     - Repository is `SequentMicrosystems/SMioplus-ha` and type is `Integration`
     - Once added, you can now search it in HACS menu and download it
 
-5. Add SMioplus config in configuration.yaml
-    - In the sidebar, select `File editor` and start the add-on
-    - Click the folder icon from the top left corner and edit `configuration.yaml`
-    - At the end of the file append the SMioplus config:
-        ```yaml
-        smioplus:
-        ```
-        > for more information, see [configuration.yaml](#configuration.yaml)
-    - Save the file
-
-6. Reboot system
-
-7. Reboot system (yes, it must be done twice)
+5. Restart Home Assistant, then open **Settings > Devices & services**.
+6. Select **Add integration**, choose **Sequent Microsystems Home Automation
+   Integration**, and enter the card's stack address. Repeat for each card.
+7. Use **Configure** on each integration entry to choose entities and their
+   update intervals. Entity names and enablement can also be changed on their
+   Home Assistant entity pages.
 
 ### Upgrading from the `SMioplus` domain
 
@@ -87,7 +89,16 @@ and an error is logged until a valid reading is received.
 
 
 
-## configuration.yaml
+## Migrating from YAML
+
+Back up Home Assistant before upgrading. Existing `smioplus` YAML configuration
+is imported once, preserving selected channels and their update intervals.
+After the entries appear in **Settings > Devices & services**, remove the
+`smioplus:` section from `configuration.yaml` and restart Home Assistant.
+Further YAML edits are not imported; make changes using the integration UI.
+If an entry for the same stack already exists, YAML does not overwrite it.
+
+The following legacy examples are retained for reference:
 
 `configuration.yaml` example:
 ```yaml
@@ -174,3 +185,14 @@ Entity options:
 Invalid channel lists and ranges are logged and skipped without loading any
 channels for that entity. Individually configured entities now use names such
 as `smio0_relay_1` instead of `smio0_relay_1_1`; their unique IDs are unchanged.
+
+## Testing
+
+With Python 3.14, install `pytest-homeassistant==2026.11.1` and `SMioplus` in a
+virtual environment, then run:
+
+```shell
+pytest -p no:respx --asyncio-mode=auto -o asyncio_default_fixture_loop_scope=function tests
+```
+
+The tests simulate the hardware; they do not require a card.
