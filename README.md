@@ -82,6 +82,9 @@ update automations and dashboards to use the new `binary_sensor` entity IDs and
 sensor registry entries, customizations, and history are not automatically
 transferred. Opto counters remain numeric sensors.
 
+If an opto input returns an invalid reading, its binary sensor reports `unknown`
+and an error is logged until a valid reading is received.
+
 
 
 ## configuration.yaml

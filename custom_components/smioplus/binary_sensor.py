@@ -53,9 +53,9 @@ class BinarySensor(BinarySensorEntity):
         self._update_interval = float(update_interval)
         self._short_timeout = .05
         self._icons = DEFAULT_ICONS | SM_MAP[self._type].get("icon", {})
-        self._icon = self._icons["off"]
+        self._icon: str | None = self._icons["off"]
         self._uom = SM_MAP[self._type].get("uom", "")
-        self._value = False
+        self._value: bool | None = False
         self._remove_hooks = []
         self.__SM__init()
         ### __CUSTOM_SETUP__ START
@@ -102,10 +102,16 @@ class BinarySensor(BinarySensorEntity):
     def update(self):
         time.sleep(self._short_timeout)
         try:
-            self._value = bool(self._SM_get(self._chan))
+            value = self._SM_get(self._chan)
         except Exception as ex:
             _LOGGER.error(DOMAIN + " %s update() failed, %s, %s, %s", self._type, ex, str(self._stack), str(self._chan))
             return
+        if not isinstance(value, int) or value not in (0, 1):
+            _LOGGER.error(DOMAIN + " %s invalid reading %r, %s, %s", self._type, value, str(self._stack), str(self._chan))
+            self._value = None
+            self._icon = None
+            return
+        self._value = bool(value)
         if self._value:
             self._icon = self._icons["on"]
         else:
