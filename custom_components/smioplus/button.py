@@ -2,23 +2,17 @@ DEFAULT_ICONS = {
         "off": "mdi:button-pointer",
 }
 
-import types
 import inspect
-from inspect import signature
 import logging
-import time
-
-from homeassistant.const import (
-	CONF_NAME
-)
+import types
+from inspect import signature
 
 from homeassistant.components.button import ButtonEntity
+from homeassistant.const import CONF_NAME
 from homeassistant.helpers.entity import generate_entity_id
 
-from . import (
-        DOMAIN, CONF_STACK, CONF_TYPE, CONF_CHAN, CONF_NAME,
-        SM_API, SM_MAP
-)
+from . import CONF_CHAN, CONF_STACK, CONF_TYPE, DOMAIN, SM_API, SM_MAP
+
 SM_MAP = SM_MAP["button"]
 
 _LOGGER = logging.getLogger(__name__)

@@ -74,6 +74,14 @@ preserving their entity IDs and settings. If conflicting entries already exist
 under `smioplus`, setup fails rather than overwriting them; resolve the
 conflicting entities before restarting.
 
+### Opto input entities
+
+Opto inputs are now binary sensors rather than numeric sensors. After upgrading,
+update automations and dashboards to use the new `binary_sensor` entity IDs and
+`on`/`off` states instead of the old `sensor` IDs and `1`/`0` states. Existing
+sensor registry entries, customizations, and history are not automatically
+transferred. Opto counters remain numeric sensors.
+
 
 
 ## configuration.yaml
@@ -147,10 +155,13 @@ opto_cnt_rst_1: -> opto_cnt_rst_8:  (type: button)
 dac_1: -> dac_4:  (type: number)
 od_1: -> od_4:  (type: number)
 adc_1: -> adc_8:  (type: sensor)
-opto_1: -> opto_8:  (type: sensor)
+opto_1: -> opto_8:  (type: binary_sensor)
 opto_cnt_1: -> opto_cnt_8:  (type: sensor)
 relay_1: -> relay_8:  (type: switch)
 ```
+
+Default icons indicate each entity's function; opto inputs and relays use
+different icons for on and off states.
 
 Entity options:
 - `channels: "1,3,5"` (specify a comma-separated list of unique channels; takes precedence over `chan_range`)

@@ -3,22 +3,28 @@ DEFAULT_ICONS = {
         "off": "mdi:numeric-0",
 }
 
+import inspect
 import logging
 import time
 import types
-import inspect
+from datetime import datetime, timedelta
 from inspect import signature
 
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.helpers.entity import generate_entity_id
 from homeassistant.helpers.event import async_track_time_interval
-from datetime import timedelta
 
 from . import (
-        DOMAIN, CONF_STACK, CONF_TYPE, CONF_CHAN, CONF_NAME,
-        CONF_UPDATE_INTERVAL,
-        SM_MAP, SM_API
+    CONF_CHAN,
+    CONF_NAME,
+    CONF_STACK,
+    CONF_TYPE,
+    CONF_UPDATE_INTERVAL,
+    DOMAIN,
+    SM_API,
+    SM_MAP,
 )
+
 SM_MAP = SM_MAP["binary_sensor"]
 
 _LOGGER = logging.getLogger(__name__)
@@ -49,7 +55,7 @@ class BinarySensor(BinarySensorEntity):
         self._icons = DEFAULT_ICONS | SM_MAP[self._type].get("icon", {})
         self._icon = self._icons["off"]
         self._uom = SM_MAP[self._type].get("uom", "")
-        self._value = 0
+        self._value = False
         self._remove_hooks = []
         self.__SM__init()
         ### __CUSTOM_SETUP__ START
@@ -77,8 +83,11 @@ class BinarySensor(BinarySensorEntity):
                 self._SM_get = _aux_SM_get
 
     async def async_added_to_hass(self):
+        async def update_state(_now: datetime) -> None:
+            await self.async_update_ha_state(True)
+
         new_hook = async_track_time_interval(
-            self.hass, self.async_update_ha_state, timedelta(seconds=self._update_interval)
+            self.hass, update_state, timedelta(seconds=self._update_interval)
         )
         self._remove_hooks.append(new_hook)
 
@@ -93,11 +102,11 @@ class BinarySensor(BinarySensorEntity):
     def update(self):
         time.sleep(self._short_timeout)
         try:
-            self._value = self._SM_get(self._chan)
+            self._value = bool(self._SM_get(self._chan))
         except Exception as ex:
-            _LOGGER.error(DOMAIN + " %s update() failed, %e, %s, %s", self._type, ex, str(self._stack), str(self._chan))
+            _LOGGER.error(DOMAIN + " %s update() failed, %s, %s, %s", self._type, ex, str(self._stack), str(self._chan))
             return
-        if self._value != 0:
+        if self._value:
             self._icon = self._icons["on"]
         else:
             self._icon = self._icons["off"]

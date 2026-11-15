@@ -2,9 +2,11 @@ FULL_NAME="Home Automation"
 LINK="https://sequentmicrosystems.com/products/raspberry-pi-home-automation-card"
 
 import libioplus
+
 API = libioplus
 DOMAIN = "smioplus"
 NAME_PREFIX = "smio"
+
 SM_MAP = {
     "button": {
         "opto_cnt_rst": {
@@ -12,9 +14,12 @@ SM_MAP = {
             "com": {
                 "set": "rstOptoCount",
             },
+            "icon": {
+                "off": "mdi:backup-restore",
+            },
         }
     },
-    "sensor":  {
+    "binary_sensor": {
         "opto": {
                 "chan_no": 8,
                 "uom": "",
@@ -25,11 +30,17 @@ SM_MAP = {
                     "on": "mdi:numeric-1",
                 }
         },
+    },
+    "sensor":  {
         "opto_cnt": {
                 "chan_no": 8,
                 "uom": "",
                 "com": {
                     "get": "getOptoCount",
+                },
+                "icon": {
+                    "on": "mdi:counter",
+                    "off": "mdi:counter",
                 },
         },
         "adc": {
@@ -39,8 +50,8 @@ SM_MAP = {
                     "get": "getAdcV",
                 },
                 "icon": {
-                    "on": "mdi:flash-triangle",
-                    "off": "mdi:flash-triangle"
+                    "on": "mdi:flash",
+                    "off": "mdi:flash"
                 }
         },
     },
@@ -61,13 +72,12 @@ SM_MAP = {
                 "max_value": 10.0,
                 "step": 0.01,
                 "com": {
-                    #"get": "__NOGET__",
                     "get": "getDacV",
                     "set": "setDacV"
                 },
                 "icon": {
-                    "on": "mdi:flash-triangle",
-                    "off": "mdi:flash-triangle"
+                    "on": "mdi:flash",
+                    "off": "mdi:flash"
                 }
         },
         "od": {
