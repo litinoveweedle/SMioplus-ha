@@ -7,6 +7,14 @@ seamlessly with Home Assistant, bringing all your custom functionality into the 
 
 ## Installation
 
+> This development version requires `sequent-ha-common==0.0.1`. The
+> shared-package version pins in both Sequent integrations should be updated
+> and tested together.
+
+For local development, install the shared package into the test Python
+environment with `python -m pip install -e /path/to/SMcommon-ha`.
+This does not replace publication for a normal Home Assistant installation.
+
 > If you already have HACS, I2C and File editor configured, you can skip to [The actual installation](#the-actual-installation)
 
 
@@ -42,23 +50,54 @@ seamlessly with Home Assistant, bringing all your custom functionality into the 
     - Repository is `SequentMicrosystems/SMioplus-ha` and type is `Integration`
     - Once added, you can now search it in HACS menu and download it
 
-5. Add SMioplus config in configuration.yaml
-    - In the sidebar, select `File editor` and start the add-on
-    - Click the folder icon from the top left corner and edit `configuration.yaml`
-    - At the end of the file append the SMioplus config:
-        ```yaml
-        SMioplus:
-        ```
-        > for more information, see [configuration.yaml](#configuration.yaml)
-    - Save the file
+5. Restart Home Assistant, then open **Settings > Devices & services**.
+6. Select **Add integration**, choose **Sequent Microsystems Home Automation
+   Integration**, and enter the card's stack address. Repeat for each card.
+7. Use **Configure** on each integration entry to choose entities and their
+   update intervals. Entity names and enablement can also be changed on their
+   Home Assistant entity pages.
 
-6. Reboot system
+### Upgrading from the `SMioplus` domain
 
-7. Reboot system (yes, it must be done twice)
+The integration domain is now lowercase, as required by Home Assistant and
+Marketplace. Back up Home Assistant before upgrading.
+
+1. Uninstall the old `SMioplus` integration from HACS or Marketplace, then
+   install the updated version. Marketplace may require uninstalling and
+   re-adding the repository when its domain changes.
+2. Ensure the old `custom_components/SMioplus` directory is gone and the new
+   integration is installed in `custom_components/smioplus`. Do not keep both.
+3. Change the top-level `SMioplus:` key in `configuration.yaml` to `smioplus:`,
+   keeping the existing settings, and restart Home Assistant.
+
+On startup, existing entity registry entries are migrated to the new domain,
+preserving their entity IDs and settings. If conflicting entries already exist
+under `smioplus`, setup fails rather than overwriting them; resolve the
+conflicting entities before restarting.
+
+### Opto input entities
+
+Opto inputs are now binary sensors rather than numeric sensors. After upgrading,
+update automations and dashboards to use the new `binary_sensor` entity IDs and
+`on`/`off` states instead of the old `sensor` IDs and `1`/`0` states. Existing
+sensor registry entries, customizations, and history are not automatically
+transferred. Opto counters remain numeric sensors.
+
+If an opto input returns an invalid reading, its binary sensor reports `unknown`
+and an error is logged until a valid reading is received.
 
 
 
-## configuration.yaml
+## Migrating from YAML
+
+Back up Home Assistant before upgrading. Existing `smioplus` YAML configuration
+is imported once, preserving selected channels and their update intervals.
+After the entries appear in **Settings > Devices & services**, remove the
+`smioplus:` section from `configuration.yaml` and restart Home Assistant.
+Further YAML edits are not imported; make changes using the integration UI.
+If an entry for the same stack already exists, YAML does not overwrite it.
+
+The following legacy examples are retained for reference:
 
 `configuration.yaml` example:
 ```yaml
@@ -73,27 +112,27 @@ automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
 
-SMioplus:
+smioplus:
     # + optional configs
 ```
 
 - Simple stack 0 config:
 
 ```yaml
-SMioplus:
+smioplus:
 ```
 
 - Specific stack config:
 
 ```yaml
-SMioplus:
+smioplus:
     - stack: 2
 ```
 
 - Multiple cards on different stack levels:
 
 ```yaml
-SMioplus:
+smioplus:
     - stack: 0
     - stack: 2
     - stack: 3
@@ -104,7 +143,7 @@ SMioplus:
 > !The following example is provided for illustrative purposes only and does NOT necessarily represent real entities!
 
 ```yaml
-SMioplus:
+smioplus:
     - stack: 0
       relay_1:
       relay_3:
@@ -129,11 +168,32 @@ opto_cnt_rst_1: -> opto_cnt_rst_8:  (type: button)
 dac_1: -> dac_4:  (type: number)
 od_1: -> od_4:  (type: number)
 adc_1: -> adc_8:  (type: sensor)
-opto_1: -> opto_8:  (type: sensor)
+opto_1: -> opto_8:  (type: binary_sensor)
 opto_cnt_1: -> opto_cnt_8:  (type: sensor)
 relay_1: -> relay_8:  (type: switch)
 ```
 
+Default icons indicate each entity's function; opto inputs and relays use
+different icons for on and off states.
+
 Entity options:
+- `channels: "1,3,5"` (specify a comma-separated list of unique channels; takes precedence over `chan_range`)
 - `chan_range: "start..end"` (specify inclusive channel range)
 - `update_interval: seconds` (specify the update interval for `sensor` and `binary_sensor`, default 30s)
+
+Invalid channel lists and ranges are logged and skipped without loading any
+channels for that entity. Individually configured entities now use names such
+as `smio0_relay_1` instead of `smio0_relay_1_1`; their unique IDs are unchanged.
+
+## Testing
+
+With Python 3.14, install `pytest-homeassistant==2026.11.1` and `SMioplus` in a
+virtual environment, along with `sequent-ha-common==0.0.1` from PyPI, then run:
+
+```shell
+pytest -p no:respx --asyncio-mode=auto -o asyncio_default_fixture_loop_scope=function tests
+```
+
+The tests simulate the hardware and check the installed driver's API signatures;
+they do not require a card. CI installs the integration requirements directly
+from PyPI using the versions specified in the manifest.
