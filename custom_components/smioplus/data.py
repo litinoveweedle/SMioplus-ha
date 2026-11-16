@@ -1,9 +1,9 @@
 FULL_NAME="Home Automation"
 LINK="https://sequentmicrosystems.com/products/raspberry-pi-home-automation-card"
 
-import libioplus
+from . import driver_adapter
 
-API = libioplus
+API = driver_adapter
 DOMAIN = "smioplus"
 NAME_PREFIX = "smio"
 
@@ -17,6 +17,11 @@ SM_MAP = {
             "icon": {
                 "off": "mdi:backup-restore",
             },
+        },
+        "owb_scan": {
+            "chan_no": 1,
+            "optional": True,
+            "com": {"set": "owbScan"},
         },
     },
     "binary_sensor": {
@@ -32,6 +37,17 @@ SM_MAP = {
         },
     },
     "sensor":  {
+        "owb_count": {
+            "chan_no": 1,
+            "optional": True,
+            "com": {"get": "owbGetSnsNo"},
+        },
+        "owb_temp": {
+            "chan_no": 16,
+            "optional": True,
+            "uom": "°C",
+            "com": {"get": "get_one_wire_temperature"},
+        },
         "opto_cnt": {
             "chan_no": 8,
             "uom": "",

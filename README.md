@@ -185,6 +185,12 @@ Invalid channel lists and ranges are logged and skipped without loading any
 channels for that entity. Individually configured entities now use names such
 as `smio0_relay_1` instead of `smio0_relay_1_1`; their unique IDs are unchanged.
 
+## Optional capabilities
+
+Select these entities under **Configure**; existing entity selections are unchanged.
+
+Optional entities include `owb_count_1`, `owb_scan_1`, and `owb_temp_1..16`. Select only connected sensors; a scan can change their indices.
+
 ## Testing
 
 With Python 3.14, install `pytest-homeassistant==2026.11.1` and `SMioplus` in a
