@@ -7,6 +7,14 @@ seamlessly with Home Assistant, bringing all your custom functionality into the 
 
 ## Installation
 
+> This development version requires `sequent-ha-common==0.0.2`, which must be
+> published before deployment. All installed Sequent integration pins should be
+> updated and tested together.
+
+For local development, install the shared package into the test Python
+environment with `python -m pip install -e /path/to/SMcommon-ha`.
+This does not replace publication for a normal Home Assistant installation.
+
 > If you already have HACS, I2C and File editor configured, you can skip to [The actual installation](#the-actual-installation)
 
 
@@ -137,3 +145,20 @@ relay_1: -> relay_8:  (type: switch)
 Entity options:
 - `chan_range: "start..end"` (specify inclusive channel range)
 - `update_interval: seconds` (specify the update interval for `sensor` and `binary_sensor`, default 30s)
+
+Invalid channel lists and ranges are logged and skipped without loading any
+channels for that entity. Individually configured entities now use names such
+as `smio0_relay_1` instead of `smio0_relay_1_1`; their unique IDs are unchanged.
+
+## Testing
+
+With Python 3.14, install `pytest-homeassistant==2026.11.1` and `SMioplus` in a
+virtual environment, along with `sequent-ha-common==0.0.2` from PyPI, then run:
+
+```shell
+pytest -p no:respx --asyncio-mode=auto -o asyncio_default_fixture_loop_scope=function tests
+```
+
+The tests simulate the hardware and check the installed driver's API signatures;
+they do not require a card. CI installs the integration requirements directly
+from PyPI using the versions specified in the manifest.
