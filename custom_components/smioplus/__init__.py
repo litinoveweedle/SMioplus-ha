@@ -3,14 +3,14 @@
 from SMcommonHA import Card
 from SMcommonHA import setup as shared_setup
 from SMcommonHA.const import (
-    COM_NOGET,
-    CONF_CHAN,
-    CONF_CHAN_RANGE,
-    CONF_CHANNELS,
-    CONF_NAME,
-    CONF_STACK,
-    CONF_TYPE,
-    CONF_UPDATE_INTERVAL,
+    COM_NOGET as COM_NOGET,
+    CONF_CHAN as CONF_CHAN,
+    CONF_CHAN_RANGE as CONF_CHAN_RANGE,
+    CONF_CHANNELS as CONF_CHANNELS,
+    CONF_NAME as CONF_NAME,
+    CONF_STACK as CONF_STACK,
+    CONF_TYPE as CONF_TYPE,
+    CONF_UPDATE_INTERVAL as CONF_UPDATE_INTERVAL,
 )
 
 from . import data

@@ -1,7 +1,7 @@
-FULL_NAME="Home Automation"
-LINK="https://sequentmicrosystems.com/products/raspberry-pi-home-automation-card"
-
 from . import driver_adapter
+
+FULL_NAME = "Home Automation"
+LINK = "https://sequentmicrosystems.com/products/raspberry-pi-home-automation-card"
 
 API = driver_adapter
 DOMAIN = "smioplus"
@@ -36,7 +36,7 @@ SM_MAP = {
             },
         },
     },
-    "sensor":  {
+    "sensor": {
         "owb_count": {
             "chan_no": 1,
             "optional": True,
@@ -65,19 +65,13 @@ SM_MAP = {
             "com": {
                 "get": "getAdcV",
             },
-            "icon": {
-                "on": "mdi:flash",
-                "off": "mdi:flash"
-            },
+            "icon": {"on": "mdi:flash", "off": "mdi:flash"},
         },
     },
     "switch": {
         "relay": {
             "chan_no": 8,
-            "com": {
-                "get": "getRelayCh",
-                "set": "setRelayCh"
-            },
+            "com": {"get": "getRelayCh", "set": "setRelayCh"},
         },
     },
     "number": {
@@ -87,14 +81,8 @@ SM_MAP = {
             "min_value": 0.0,
             "max_value": 10.0,
             "step": 0.01,
-            "com": {
-                "get": "getDacV",
-                "set": "setDacV"
-            },
-            "icon": {
-                "on": "mdi:flash",
-                "off": "mdi:flash"
-            },
+            "com": {"get": "getDacV", "set": "setDacV"},
+            "icon": {"on": "mdi:flash", "off": "mdi:flash"},
         },
         "od": {
             "chan_no": 4,
@@ -102,14 +90,8 @@ SM_MAP = {
             "min_value": 0.0,
             "max_value": 100.0,
             "step": 0.01,
-            "com": {
-                "get": "_fixed_getOdPwm",
-                "set": "_fixed_setOdPwm"
-            },
-            "icon": {
-                "on": "mdi:percent",
-                "off": "mdi:percent"
-            },
+            "com": {"get": "_fixed_getOdPwm", "set": "_fixed_setOdPwm"},
+            "icon": {"on": "mdi:percent", "off": "mdi:percent"},
         },
     },
 }
